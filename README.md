@@ -2,7 +2,7 @@
     <img src="./rearc_logo_rgb.png" alt="Rearc Logo" title="Rearc Logo" height="52" />
 </a>
 
-**English Readme is presented after the German Readme**
+**English README is presented after the German README**
 
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
