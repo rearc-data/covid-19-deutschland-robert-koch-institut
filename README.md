@@ -60,7 +60,7 @@ Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgende
 
 # COVID-19 Germany Data | Robert Koch Institute (RKI)
 
-You can subscribe to the AWS Data Exchange product utilizing the automation featured in this repository by visiting []().
+You can subscribe to the AWS Data Exchange product utilizing the automation featured in this repository by visiting [https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c](https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c).
 
 ## Main Overview
 
