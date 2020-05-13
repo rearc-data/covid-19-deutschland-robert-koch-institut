@@ -2,6 +2,8 @@
     <img src="./rearc_logo_rgb.png" alt="Rearc Logo" title="Rearc Logo" height="52" />
 </a>
 
+**English Readme is presented after the German Readme**
+
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
 Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter []() abonnieren.
@@ -53,6 +55,8 @@ Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgende
 - [Bundesamt für Kartographie und Geodäsie](https://www.bkg.bund.de/DE/Home/home.html)
 - Häufigkeit: Täglich
 - Formate: CSV, JSON
+
+---
 
 # COVID-19 Germany Data | Robert Koch Institute (RKI)
 

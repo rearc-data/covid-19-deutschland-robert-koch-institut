@@ -1,3 +1,5 @@
+**English Product Description is presented after the German Product Description**
+
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
 Das Programm das diese Datensätze sammelt, transformiert, überarbeitet und veröffentlicht, ist verfügbar unter [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
@@ -49,6 +51,8 @@ Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgende
 - [Bundesamt für Kartographie und Geodäsie](https://www.bkg.bund.de/DE/Home/home.html)
 - Häufigkeit: Täglich
 - Formate: CSV, JSON
+
+---
 
 # COVID-19 Germany Data | Robert Koch Institute (RKI)
 
