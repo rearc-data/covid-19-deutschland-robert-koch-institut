@@ -1,5 +1,57 @@
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
+Der Quellcode, der beschreibt, wie dieses Produkt seine Datensätze sammelt, transformiert, überarbeitet und veröffentlicht, ist unter verfügbar [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
+
+## Hauptübersicht
+
+Diese Ressource wird vom Robert Koch-Institut (RKI) erstellt und täglich mit Details zur aktuellen Anzahl von COVID-19-Fällen in Deutschland aktualisiert.
+
+#### Datenquelle
+Der enthaltene Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgenden Spalten:
+
+- `FID`: Eindeutige ID für den Reichweiteneintrag im Datensatz
+- `IdBundesland`: Id des Bundeslands des Falles
+- `Bundesland`: Name des Bundeslanes
+- `Landkreis`: Name des Landkreises
+- `Altersgruppe`: Altersgruppe des Falles aus den 6 Gruppe 0-4, 5-14, 15-34, 35-59, 60-79, 80+ sowie unbekannt
+- `Geschlecht`: Geschlecht des Falles
+- `AnzahlFall`: Anzahl der Fälle in der entsprechenden Gruppe
+- `AnzahlTodesfall`: Anzahl der Todesfälle in der entsprechenden Gruppe
+- `Meldedatum`: Datum, wann der Fall dem Gesundheitsamt bekannt geworden ist
+- `IdLandkreis`: Id des Landkreises des Falles
+- `Datenstand`:  Datum, wann der Datensatz zuletzt aktualisiert worden ist
+- `NeuerFall`:
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag enthalten
+    * `1`: Fall ist nur in der aktuellen Publikation enthalten
+    * `-1`: Fall ist nur in der Publikation des Vortags enthalten
+- `NeuerTodesfall`:
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag jeweils ein Todesfall
+    * `1`: Fall ist in der aktuellen Publikation ein Todesfall, nicht jedoch in der Publikation des Vortages
+    * `-1`: Fall ist in der aktuellen Publikation kein Todesfall, jedoch war er in der Publikation des Vortags ein Todesfall
+    * `-9`: Fall ist weder in der aktuellen Publikation noch in der des Vortages ein Todesfall
+- `Refdatum`
+- `NeuGenesen`:
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag jeweils Genesen
+    * `1`: Fall ist in der aktuellen Publikation Genesen, nicht jedoch in der Publikation des Vortages
+    * `-1`: Fall ist in der aktuellen Publikation nicht Genesen, jedoch war er in der Publikation des Vortags Genesen
+    * `-9`: Fall ist weder in der aktuellen Publikation noch in der des Vortages Genesen
+- `AnzahlGenesen`: Anzahl der Genesenen in der entsprechenden Gruppe
+- `IstErkrankungsbeginn`: `1`, wenn das `Refdatum` der Erkrankungsbeginn ist, `0` sonst
+- `Altersgruppe2`: Altersgruppe des Falles aus 5-Jahresgruppen 0-4, 5-9, 10-14, ..., 75-79, 80+ sowie unbekannt
+
+## Kontaktdetails
+- Wenn Sie Probleme oder Verbesserungen mit diesem Produkt feststellen, öffnen Sie ein GitHub [issue](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut/issues), und wir werden es uns gerne ansehen. Besser noch, senden Sie eine Pull-Anfrage. Alle Beiträge, die Sie leisten, werden sehr geschätzt :heart:.
+- Wenn Sie an anderen offenen Datensätzen interessiert sind, erstellen Sie bitte eine Anfrage in unserem Projektboard [hier](https://github.com/rearc-data/covid-datasets-aws-data-exchange/projects/1).
+- Bei Fragen zu diesen Quelldaten wenden Sie sich bitte an das Robert Koch Institut.
+- Wenn Sie weitere Fragen oder Feedback haben, senden Sie uns eine E-Mail an data@rearc.io.
+
+## Mehr Informationen
+- Quelle - [RKI COVID19](https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0)
+- [Robert Koch-Institut](https://www.rki.de/DE/Home/homepage_node.html)
+- [Bundesamt für Kartographie und Geodäsie](https://www.bkg.bund.de/DE/Home/home.html)
+- Häufigkeit: Täglich
+- Formate: CSV, JSON
+
 # COVID-19 Germany Data | Robert Koch Institute (RKI)
 
 The source code outlining how this product gathers, transforms, revises and publishes its datasets is available at [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
@@ -8,7 +60,7 @@ The source code outlining how this product gathers, transforms, revises and publ
 
 This resource is produced by the Robert Koch Institute (RKI), and updates daily with details regarding the current number of COVID-19 cases in Germany.
 
-Note: The dataset included with this product is in German.
+Note, The dataset included with this product is in German.
 
 #### Data Source
 The included dataset is presented in CSV and JSON format, and features the following columns:
@@ -50,8 +102,8 @@ The included dataset is presented in CSV and JSON format, and features the follo
 - If you have any other questions or feedback, send us an email at data@rearc.io.
 
 ## More Information
-- Source - [RKI COVID19](https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0) 
+- Source - [RKI COVID19](https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0) | Note, this webpage is in German
 - [Robert Koch Institute](https://www.rki.de/EN/Home/homepage_node.html)
-- [Federal Agency for Cartography and Geodesy](https://www.bkg.bund.de/DE/Home/home.html)
+- [Federal Agency for Cartography and Geodesy](https://www.bkg.bund.de/EN/Home/home.html)
 - Frequency: Daily
 - Formats: CSV, JSON

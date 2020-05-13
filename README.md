@@ -4,7 +4,7 @@
 
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
-Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter [] () abonnieren.
+Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter []().
 
 ## Hauptübersicht
 
@@ -44,15 +44,15 @@ Der enthaltene Datensatz wird im CSV- und JSON-Format dargestellt und enthält d
 - `Altersgruppe2`: Altersgruppe des Falles aus 5-Jahresgruppen 0-4, 5-9, 10-14, ..., 75-79, 80+ sowie unbekannt
 
 ## Kontaktdetails
-- Wenn Sie Probleme oder Verbesserungen mit diesem Produkt finden, öffnen Sie einen GitHub [Problem] (https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut/issues) und wir werden es tun schau es dir gerne an. Besser noch, senden Sie eine Pull-Anfrage. Alle Beiträge, die Sie leisten, werden sehr geschätzt :heart:.
-- Wenn Sie an anderen offenen Datensätzen interessiert sind, erstellen Sie bitte eine Anfrage in unserer Projekttafel [hier] (https://github.com/rearc-data/covid-datasets-aws-data-exchange/projects/1).
+- Wenn Sie Probleme oder Verbesserungen mit diesem Produkt feststellen, öffnen Sie ein GitHub [issue](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut/issues), und wir werden es uns gerne ansehen. Besser noch, senden Sie eine Pull-Anfrage. Alle Beiträge, die Sie leisten, werden sehr geschätzt :heart:.
+- Wenn Sie an anderen offenen Datensätzen interessiert sind, erstellen Sie bitte eine Anfrage in unserem Projektboard [hier](https://github.com/rearc-data/covid-datasets-aws-data-exchange/projects/1).
 - Bei Fragen zu diesen Quelldaten wenden Sie sich bitte an das Robert Koch Institut.
 - Wenn Sie weitere Fragen oder Feedback haben, senden Sie uns eine E-Mail an data@rearc.io.
 
 ## Mehr Informationen
-- Quelle - [RKI COVID19] (https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0)
-- [Robert Koch-Institut] (https://www.rki.de/DE/Home/homepage_node.html)
-- [Bundesamt für Kartographie und Geodäsie] (https://www.bkg.bund.de/DE/Home/home.html)
+- Quelle - [RKI COVID19](https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0)
+- [Robert Koch-Institut](https://www.rki.de/DE/Home/homepage_node.html)
+- [Bundesamt für Kartographie und Geodäsie](https://www.bkg.bund.de/DE/Home/home.html)
 - Häufigkeit: Täglich
 - Formate: CSV, JSON
 
