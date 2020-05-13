@@ -1,19 +1,17 @@
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
-Der Quellcode, der beschreibt, wie dieses Produkt seine Datensätze sammelt, transformiert, überarbeitet und veröffentlicht, ist unter verfügbar [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
+Das Programm das diese Datensätze sammelt, transformiert, überarbeitet und veröffentlicht, ist verfügbar unter [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
 
 ## Hauptübersicht
-
-Diese Ressource wird vom Robert Koch-Institut (RKI) erstellt und täglich mit Details zur aktuellen Anzahl von COVID-19-Fällen in Deutschland aktualisiert.
+Die QuellDaten werden vom Robert Koch-Institut (RKI) erstellt und täglich mit Details zur aktuellen Anzahl von COVID-19-Fällen in Deutschland aktualisiert.
 
 #### Datenquelle
-Der enthaltene Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgenden Spalten:
-
-- `FID`: Eindeutige ID für den Reichweiteneintrag im Datensatz
+Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgenden Spalten:
+- `FID`: Eindeutige ID für den  Datensatz
 - `IdBundesland`: Id des Bundeslands des Falles
 - `Bundesland`: Name des Bundeslanes
 - `Landkreis`: Name des Landkreises
-- `Altersgruppe`: Altersgruppe des Falles aus den 6 Gruppe 0-4, 5-14, 15-34, 35-59, 60-79, 80+ sowie unbekannt
+- `Altersgruppe`: Altersgruppe des Falles aus den 6 Gruppe 0-4, 5-14, 15-34, 35-59, 60-79, 80+, sowie unbekannt
 - `Geschlecht`: Geschlecht des Falles
 - `AnzahlFall`: Anzahl der Fälle in der entsprechenden Gruppe
 - `AnzahlTodesfall`: Anzahl der Todesfälle in der entsprechenden Gruppe
@@ -21,28 +19,28 @@ Der enthaltene Datensatz wird im CSV- und JSON-Format dargestellt und enthält d
 - `IdLandkreis`: Id des Landkreises des Falles
 - `Datenstand`:  Datum, wann der Datensatz zuletzt aktualisiert worden ist
 - `NeuerFall`:
-    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag enthalten
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der Publikation für den Vortag enthalten
     * `1`: Fall ist nur in der aktuellen Publikation enthalten
     * `-1`: Fall ist nur in der Publikation des Vortags enthalten
 - `NeuerTodesfall`:
-    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag jeweils ein Todesfall
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der Publikation für den Vortag jeweils ein Todesfall
     * `1`: Fall ist in der aktuellen Publikation ein Todesfall, nicht jedoch in der Publikation des Vortages
     * `-1`: Fall ist in der aktuellen Publikation kein Todesfall, jedoch war er in der Publikation des Vortags ein Todesfall
     * `-9`: Fall ist weder in der aktuellen Publikation noch in der des Vortages ein Todesfall
 - `Refdatum`
 - `NeuGenesen`:
-    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der für den Vortag jeweils Genesen
+    * `0`: Fall ist in der Publikation für den aktuellen Tag und in der Publikation für den Vortag jeweils Genesen
     * `1`: Fall ist in der aktuellen Publikation Genesen, nicht jedoch in der Publikation des Vortages
     * `-1`: Fall ist in der aktuellen Publikation nicht Genesen, jedoch war er in der Publikation des Vortags Genesen
     * `-9`: Fall ist weder in der aktuellen Publikation noch in der des Vortages Genesen
 - `AnzahlGenesen`: Anzahl der Genesenen in der entsprechenden Gruppe
 - `IstErkrankungsbeginn`: `1`, wenn das `Refdatum` der Erkrankungsbeginn ist, `0` sonst
-- `Altersgruppe2`: Altersgruppe des Falles aus 5-Jahresgruppen 0-4, 5-9, 10-14, ..., 75-79, 80+ sowie unbekannt
+- `Altersgruppe2`: Altersgruppe des Falles aus 5-Jahresgruppen 0-4, 5-9, 10-14, ..., 75-79, 80+, sowie unbekannt
 
 ## Kontaktdetails
 - Wenn Sie Probleme oder Verbesserungen mit diesem Produkt feststellen, öffnen Sie ein GitHub [issue](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut/issues), und wir werden es uns gerne ansehen. Besser noch, senden Sie eine Pull-Anfrage. Alle Beiträge, die Sie leisten, werden sehr geschätzt :heart:.
 - Wenn Sie an anderen offenen Datensätzen interessiert sind, erstellen Sie bitte eine Anfrage in unserem Projektboard [hier](https://github.com/rearc-data/covid-datasets-aws-data-exchange/projects/1).
-- Bei Fragen zu diesen Quelldaten wenden Sie sich bitte an das Robert Koch Institut.
+- Bei Fragen zu den Quelldaten wenden Sie sich bitte an das Robert Koch Institut.
 - Wenn Sie weitere Fragen oder Feedback haben, senden Sie uns eine E-Mail an data@rearc.io.
 
 ## Mehr Informationen
@@ -57,19 +55,16 @@ Der enthaltene Datensatz wird im CSV- und JSON-Format dargestellt und enthält d
 The source code outlining how this product gathers, transforms, revises and publishes its datasets is available at [https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut).
 
 ## Main Overview
-
 This resource is produced by the Robert Koch Institute (RKI), and updates daily with details regarding the current number of COVID-19 cases in Germany.
-
 Note, The dataset included with this product is in German.
 
 #### Data Source
 The included dataset is presented in CSV and JSON format, and features the following columns:
-
 - `FID` (ObjectId): Unique ID for reach entry in the dataset
 - `IdBundesland` (StateId): Id of the federal state of the case
 - `Bundesland` (State): Name of state
 - `Landkreis` (County): Name of the county
-- `Altersgruppe` (AgeGroup): Age group of the case from the 6 groups 0-4, 5-14, 15-34, 35-59, 60-79, 80+ and unknown
+- `Altersgruppe` (AgeGroup): Age group of the case from the 6 groups 0-4, 5-14, 15-34, 35-59, 60-79, 80+, and unknown
 - `Geschlecht` (Gender): Gender of case
 - `AnzahlFall` (NumberOfCases): Number of cases in the corresponding group
 - `AnzahlTodesfall` (NumberOfDeaths): Number of deaths in the corresponding group
@@ -93,7 +88,7 @@ The included dataset is presented in CSV and JSON format, and features the follo
     * `-9`: The case is neither recovered in the current publication nor in the previous day
 - `AnzahlGenesen` (NumberOfRecoveries): Number of recoveries in the corresponding group
 - `IstErkrankungsbeginn` (IsOnsetOfIllness): `1` if `Refdatum` is the onset of illness, `0` otherwise
-- `Altersgruppe2` (AgeGroup2): Age group of the case from 5-year groups 0-4, 5-9, 10-14, ..., 75-79, 80+ and unknown
+- `Altersgruppe2` (AgeGroup2): Age group of the case from 5-year groups 0-4, 5-9, 10-14, ..., 75-79, 80+, and unknown
 
 ## Contact Details
 - If you find any issues or have enhancements with this product, open up a GitHub [issue](https://github.com/rearc-data/covid-19-deutschland-robert-koch-institut/issues) and we will gladly take a look at it. Better yet, submit a pull request. Any contributions you make are greatly appreciated :heart:.
