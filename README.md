@@ -6,7 +6,7 @@
 
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
-Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter []() abonnieren.
+Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter [https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c](https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c) abonnieren.
 
 ## Hauptübersicht
 Die QuellDaten werden vom Robert Koch-Institut (RKI) erstellt und täglich mit Details zur aktuellen Anzahl von COVID-19-Fällen in Deutschland aktualisiert.
