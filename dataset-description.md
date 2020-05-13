@@ -1,0 +1,1 @@
+Diese Ressource wird vom Robert Koch-Institut (RKI) erstellt und täglich mit Details zur aktuellen Anzahl von COVID-19-Fällen in Deutschland aktualisiert. This resource is produced by the Robert Koch Institute (RKI), and updates daily with details regarding the current number of COVID-19 cases in Germany.
