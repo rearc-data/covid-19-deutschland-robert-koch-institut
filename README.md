@@ -63,7 +63,6 @@ Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgende
 You can subscribe to the AWS Data Exchange product utilizing the automation featured in this repository by visiting [https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c](https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c).
 
 ## Main Overview
-
 This resource is produced by the Robert Koch Institute (RKI), and updates daily with details regarding the current number of COVID-19 cases in Germany.
 
 Note, The dataset included with this product is in German.

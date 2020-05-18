@@ -40,7 +40,7 @@ def source_dataset(new_filename, s3_bucket, new_s3_key):
 	for filename in os.listdir('/tmp'):
 
 		s3.upload_file('/tmp/' + filename, s3_bucket, new_s3_key + filename)
-
 		asset_list.append({'Bucket': s3_bucket, 'Key': new_s3_key + filename})
+		os.remove('/tmp/' + filename)
 
 	return asset_list

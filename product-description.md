@@ -60,6 +60,7 @@ The source code outlining how this product gathers, transforms, revises and publ
 
 ## Main Overview
 This resource is produced by the Robert Koch Institute (RKI), and updates daily with details regarding the current number of COVID-19 cases in Germany.
+
 Note, The dataset included with this product is in German.
 
 #### Data Source
