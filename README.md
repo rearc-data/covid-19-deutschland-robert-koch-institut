@@ -6,6 +6,8 @@
 
 # COVID-19 Deutschland Daten | Robert Koch-Institut (RKI)
 
+**Update (1/06/2021): Dieses Produkt wurde so geändert, dass es jetzt täglich um 3 Uhr morgens GMT aktualisiert wird, wo es zuvor um 9 Uhr morgens GMT täglich aktualisiert wurde.**
+
 Sie können das AWS Data Exchange-Produkt mithilfe der in diesem Repository enthaltenen Automatisierung unter [https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c](https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c) abonnieren.
 
 ## Hauptübersicht
@@ -59,6 +61,8 @@ Der Datensatz wird im CSV- und JSON-Format dargestellt und enthält die folgende
 ---
 
 # COVID-19 Germany Data | Robert Koch Institute (RKI)
+
+**Update(1/06/2021): This product has been changed so that it now updates at 3 a.m. GMT time daily, where as it would previously update at 9 a.m. GMT daily.**
 
 You can subscribe to the AWS Data Exchange product utilizing the automation featured in this repository by visiting [https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c](https://aws.amazon.com/marketplace/pp/prodview-ml7k2bnvh4i5c).
 
