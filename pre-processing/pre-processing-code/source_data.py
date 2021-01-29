@@ -1,54 +1,77 @@
 import os
 import boto3
+import time
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
-import csv
-import json
+from zipfile import ZipFile
+from s3_md5_compare import md5_compare
+from boto3.s3.transfer import TransferConfig
+from io import BytesIO
 
-def source_dataset(new_filename, s3_bucket, new_s3_key):
+def source_dataset():
+    source_dataset_url = 'https://opendata.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv'
+    
+    response = None
+    retries = 5
+    for attempt in range(retries):
+        try:
+            response = urlopen(source_dataset_url)
+        except HTTPError as e:
+            if attempt == retries:
+                raise Exception('HTTPError: ', e.code)
+            time.sleep(0.2 * attempt)
+        except URLError as e:
+            if attempt == retries:
+                raise Exception('URLError: ', e.reason)
+            time.sleep(0.2 * attempt)
+        else:
+            break
+            
+    if response is None:
+        raise Exception('There was an issue downloading the dataset')
+            
+    data_set_name = os.environ['DATA_SET_NAME']
 
-	source_dataset_url = 'https://opendata.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv'
-	file_location = '/tmp/' + new_filename
+    data_dir = '/tmp'
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
 
-	s3_resource = boto3.resource('s3')
-	asset_list = []
+    file_location = os.path.join(data_dir, data_set_name+'.csv')
 
-	try:
-		response = urlopen(source_dataset_url)
+    s3_bucket = os.environ['S3_BUCKET']
+    s3 = boto3.client('s3')
+    s3_resource = boto3.resource('s3')
+    config = TransferConfig(multipart_threshold=1024*25, max_concurrency=10,
+                            multipart_chunksize=1024*25, use_threads=True)
 
-	except HTTPError as e:
-		raise Exception('HTTPError: ', e.code, source_dataset_url)
+    s3_uploads = []
+    asset_list = []
 
-	except URLError as e:
-		raise Exception('URLError: ', e.reason, source_dataset_url)
+    obj_name = file_location.split('/', 3).pop().replace(' ', '_').lower()
+    file_location = os.path.join(data_dir, obj_name)
+    new_s3_key = data_set_name + '/dataset/' + obj_name
+    filedata = response.read()
 
-	else:
-		s3 = boto3.client('s3')
-		
-		filename_csv = file_location + '.csv'
-		with open(filename_csv, 'wb') as c:
-			c.write(response.read())
-			
-		s3.upload_file(filename_csv, s3_bucket, new_s3_key + filename_csv.split('/')[-1])
-		asset_list.append({'Bucket': s3_bucket, 'Key': new_s3_key + filename_csv.split('/')[-1]})
-		
-		data_json = None
-		with open(filename_csv, 'r', encoding='utf-8-sig') as r:
-			reader = csv.DictReader(r)
-			data_json = ',\n'.join(json.dumps(row, ensure_ascii=False) for row in reader)
-		
-		os.remove(filename_csv)
-		
-		filename_json = file_location + '.json'
-		with open(filename_json, 'w', encoding='utf-8') as j:
-			j.write('[')
-			j.write(data_json)
-			j.write(']')
-			
-		s3.upload_file(filename_json, s3_bucket, new_s3_key + filename_json.split('/')[-1])
-		asset_list.append({'Bucket': s3_bucket, 'Key': new_s3_key + filename_json.split('/')[-1]})
-		os.remove(filename_json)
-		
-		print(asset_list)
+    has_changes = md5_compare(s3, s3_bucket, new_s3_key, BytesIO(filedata))
+    if has_changes:
+        s3_resource.Object(s3_bucket, new_s3_key).put(Body=filedata)
+        # sys.exit(0)
+        print('Uploaded: ' + file_location)
+    else:
+        print('No changes in: ' + file_location)
 
-	return asset_list
+    asset_source = {'Bucket': s3_bucket, 'Key': new_s3_key}
+    s3_uploads.append({'has_changes': has_changes, 'asset_source': asset_source})
+
+    count_updated_data = sum(upload['has_changes'] == True for upload in s3_uploads)
+    if count_updated_data > 0:
+        asset_list = list(map(lambda upload: upload['asset_source'], s3_uploads))
+        if len(asset_list) == 0:
+            raise Exception('Something went wrong when uploading files to s3')
+
+    # asset_list is returned to be used in lamdba_handler function
+    # if it is empty, lambda_handler will not republish
+    return asset_list
+
+if __name__ == '__main__':
+    source_dataset()

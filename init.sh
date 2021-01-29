@@ -52,11 +52,11 @@ done
 
 #upload pre-preprocessing.zip to s3
 echo "uploading pre-preprocessing.zip to s3"
-aws s3 cp pre-processing/pre-processing-code/pre-processing-code.zip s3://$S3_BUCKET/$DATASET_NAME/automation/pre-processing-code.zip --region $REGION$PROFILE
+aws s3 cp pre-processing/pre-processing-code/pre-processing-code.zip s3://$S3_BUCKET/$DATASET_NAME/automation/pre-processing-code.zip --region "$REGION$PROFILE"
 
 #creating dataset on ADX
 echo "creating dataset on ADX"
-DATASET_COMMAND="aws dataexchange create-data-set --asset-type "S3_SNAPSHOT" --description file://dataset-description.md --name \"${PRODUCT_NAME}\" --region $REGION --output json$PROFILE"
+DATASET_COMMAND="aws dataexchange create-data-set --asset-type "S3_SNAPSHOT" --description file://dataset-description.md --name \"${PRODUCT_NAME}\" --region $REGION --output json $PROFILE"
 DATASET_OUTPUT=$(eval $DATASET_COMMAND)
 DATASET_ARN=$(echo $DATASET_OUTPUT | tr '\r\n' ' ' | jq -r '.Arn')
 DATASET_ID=$(echo $DATASET_OUTPUT | tr '\r\n' ' ' | jq -r '.Id')
@@ -64,10 +64,10 @@ DATASET_ID=$(echo $DATASET_OUTPUT | tr '\r\n' ' ' | jq -r '.Id')
 #creating pre-processing cloudformation stack
 echo "creating pre-processing cloudformation stack"
 CFN_STACK_NAME="producer-${DATASET_NAME}-preprocessing"
-aws cloudformation create-stack --stack-name $CFN_STACK_NAME --template-body file://pre-processing/pre-processing-cfn.yaml --parameters ParameterKey=S3Bucket,ParameterValue=$S3_BUCKET ParameterKey=DataSetName,ParameterValue=$DATASET_NAME ParameterKey=DataSetArn,ParameterValue=$DATASET_ARN ParameterKey=ProductId,ParameterValue=$PRODUCT_ID ParameterKey=Region,ParameterValue=$REGION --region $REGION --capabilities "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" "CAPABILITY_IAM"$PROFILE
+aws cloudformation create-stack --stack-name "$CFN_STACK_NAME" --template-body file://pre-processing/pre-processing-cfn.yaml --parameters ParameterKey=S3Bucket,ParameterValue="$S3_BUCKET" ParameterKey=DataSetName,ParameterValue="$DATASET_NAME" ParameterKey=DataSetArn,ParameterValue="$DATASET_ARN" ParameterKey=ProductId,ParameterValue="$PRODUCT_ID" ParameterKey=Region,ParameterValue="$REGION" --region "$REGION" --capabilities "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" "CAPABILITY_IAM" $PROFILE
 
 echo "waiting for cloudformation stack to complete"
-aws cloudformation wait stack-create-complete --stack-name $CFN_STACK_NAME --region $REGION$PROFILE
+aws cloudformation wait stack-create-complete --stack-name "$CFN_STACK_NAME" --region "$REGION" $PROFILE
 
 if [[ $? -ne 0 ]]
 then
@@ -80,11 +80,11 @@ fi
 echo "invoking the pre-processing lambda function to create first dataset revision"
 LAMBDA_FUNCTION_NAME="source-for-${DATASET_NAME}"
 # AWS CLI version 2 changes require explicitly declairing `--cli-binary-format raw-in-base64-out` for the format of the `--payload`
-LAMBDA_FUNCTION_STATUS_CODE=$(aws lambda invoke --function-name $LAMBDA_FUNCTION_NAME --invocation-type "RequestResponse" --payload '{ "test": "event" }' response.json --cli-binary-format raw-in-base64-out --region $REGION --query 'StatusCode' --output text$PROFILE)
+LAMBDA_FUNCTION_STATUS_CODE=$(aws lambda invoke --function-name "$LAMBDA_FUNCTION_NAME" --invocation-type "RequestResponse" --payload '{ "test": "event" }' response.json --cli-binary-format raw-in-base64-out --region "$REGION" --query 'StatusCode' --output text $PROFILE)
 
 #grabbing dataset revision status
 echo "grabbing dataset revision status"
-DATASET_REVISION_STATUS=$(aws dataexchange list-data-set-revisions --data-set-id $DATASET_ID --region $REGION --query "sort_by(Revisions, &CreatedAt)[-1].Finalized"$PROFILE)
+DATASET_REVISION_STATUS=$(aws dataexchange list-data-set-revisions --data-set-id "$DATASET_ID" --region "$REGION" --query "sort_by(Revisions, &CreatedAt)[-1].Finalized" $PROFILE)
 
 update () {
   echo ""
@@ -93,10 +93,10 @@ update () {
   
   # Cloudformation stack update
   echo "updating pre-processing cloudformation stack"
-  aws cloudformation update-stack --stack-name $CFN_STACK_NAME --use-previous-template --parameters ParameterKey=S3Bucket,ParameterValue=$S3_BUCKET ParameterKey=DataSetName,ParameterValue=$DATASET_NAME ParameterKey=DataSetArn,ParameterValue=$DATASET_ARN ParameterKey=ProductId,ParameterValue=$NEW_PRODUCT_ID ParameterKey=Region,ParameterValue=$REGION --region $REGION --capabilities "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" "CAPABILITY_IAM"$PROFILE
+  aws cloudformation update-stack --stack-name "$CFN_STACK_NAME" --use-previous-template --parameters ParameterKey=S3Bucket,ParameterValue="$S3_BUCKET" ParameterKey=DataSetName,ParameterValue="$DATASET_NAME" ParameterKey=DataSetArn,ParameterValue="$DATASET_ARN" ParameterKey=ProductId,ParameterValue="$NEW_PRODUCT_ID" ParameterKey=Region,ParameterValue="$REGION" --region "$REGION" --capabilities "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" "CAPABILITY_IAM" $PROFILE
 
   echo "waiting for cloudformation stack update to complete"
-  aws cloudformation wait stack-update-complete --stack-name $CFN_STACK_NAME --region $REGION$PROFILE
+  aws cloudformation wait stack-update-complete --stack-name "$CFN_STACK_NAME" --region "$REGION $PROFILE"
 
   if [[ $? -ne 0 ]]
   then
@@ -108,10 +108,10 @@ update () {
 
 delete () {
   echo "Destroying the CloudFormation stack"
-  aws cloudformation delete-stack --stack-name $CFN_STACK_NAME --region $REGION$PROFILE
+  aws cloudformation delete-stack --stack-name "$CFN_STACK_NAME" --region "$REGION" $PROFILE
 
   #check status of cloudformation stack delete action
-  aws cloudformation wait stack-delete-complete --stack-name $CFN_STACK_NAME --region $REGION$PROFILE
+  aws cloudformation wait stack-delete-complete --stack-name "$CFN_STACK_NAME" --region "$REGION" $PROFILE
   if [[ $? -eq 0 ]]
   then
     # Cloudformation stack deleted
