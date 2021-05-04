@@ -1,0 +1,144 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: "AWS::Serverless-2016-10-31"
+# CloudFormation template in YAML to setup an automated process to update revisions to datasets in AWS Data Exchange
+Parameters:
+  S3Bucket:
+    Type: String
+    Default: rearc-data-provider
+    Description: Provide the S3 Bucket name where this dataset resides. For e.g. rearc-data-provider
+  DataSetName:
+    Type: String
+    Description: Name of the dataset
+  DataSetArn:
+    Type: String
+    Description: ARN for the AWS Data Exchange dataset that needs to be updated
+  ProductId:
+    Type: String
+    Description: ID of the AWS Data Exchange product that needs to be updated
+  Region:
+    Type: String
+    Default: us-east-1
+    Description: AWS Region for AWS Data Exchange
+  SourceURL:
+    Type: String
+    Description: Source URL for Data File Download (only single file datasets)
+  ScheduleCron:
+    Type: String
+    Description: Cron Expression for the Lambda Run Schedule
+
+Resources:
+# Create an IAM role for Lambda to use
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::796406704065:policy/AWSDataExchangeService
+        - arn:aws:iam::aws:policy/AWSMarketplaceSellerFullAccess
+        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+      Path: /
+
+# Create a Lambda function that will update daily revisions to AWS Data Exchange dataset
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        !Join
+          - ''
+          - - 'source-for-'
+            - !Ref DataSetName
+      Description: "Source revision updates to AWS Data Exchange data set"
+      Runtime: "python3.7"
+      Code:
+        S3Bucket:
+          Fn::Sub: ${S3Bucket}
+        S3Key:
+          !Join
+            - ''
+            - - Fn::Sub: ${DataSetName}
+              - '/automation/pre-processing-code.zip'
+      Handler: "lambda_function.lambda_handler"
+      MemorySize: 2048
+      Timeout: 900
+      Role:
+        Fn::GetAtt:
+          - LambdaRole
+          - Arn
+      Environment:
+        Variables:
+          S3_BUCKET:
+            Fn::Sub: ${S3Bucket}
+          DATA_SET_NAME:
+            Fn::Sub: ${DataSetName}
+          DATA_SET_ARN:
+            Fn::Sub: ${DataSetArn}
+          PRODUCT_ID:
+            Fn::Sub: ${ProductId}
+          REGION:
+            Fn::Sub: ${Region}
+          SOURCE_URL:
+            Fn::Sub: ${SourceURL}
+
+  ScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "ScheduledRule"
+      ScheduleExpression: !Sub ${ScheduleCron}
+      State: "ENABLED"
+      Targets:
+        -
+          Arn:
+            Fn::GetAtt:
+              - "LambdaFunction"
+              - "Arn"
+          Id: "TargetFunctionV1"
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: "LambdaFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "ScheduledRule"
+          - "Arn"
+
+  version:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref "LambdaFunction"
+
+  asyncconfig:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      DestinationConfig:
+          OnFailure:
+            Destination: arn:aws:sns:us-east-1:796406704065:adx-lambda-error
+      FunctionName: !Ref "LambdaFunction"
+      MaximumEventAgeInSeconds: 300
+      MaximumRetryAttempts: 2
+      Qualifier: $LATEST
+
+Outputs:
+  LambdaRoleARN:
+    Description: Role for Lambda execution.
+    Value:
+      Fn::GetAtt:
+        - LambdaRole
+        - Arn
+  LambdaFunctionName:
+    Value:
+      Ref: LambdaFunction
