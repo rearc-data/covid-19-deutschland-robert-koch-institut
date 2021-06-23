@@ -8,9 +8,9 @@ from s3_md5_compare import md5_compare
 from boto3.s3.transfer import TransferConfig
 from io import BytesIO
 
-def source_dataset(source_dataset_url):
-    # source_dataset_url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PERMIT"
-    
+def source_dataset():
+    source_dataset_url = "https://opendata.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv"
+
     response = None
     retries = 5
     for attempt in range(retries):
@@ -26,11 +26,11 @@ def source_dataset(source_dataset_url):
             time.sleep(0.2 * attempt)
         else:
             break
-            
+
     if response is None:
         raise Exception('There was an issue downloading the dataset')
-            
-    data_set_name = os.environ['DATA_SET_NAME']
+
+    data_set_name = os.environ['DATASET_NAME']
 
     data_dir = '/tmp'
     if not os.path.exists(data_dir):
@@ -38,7 +38,7 @@ def source_dataset(source_dataset_url):
 
     file_location = os.path.join(data_dir, data_set_name+'.csv')
 
-    s3_bucket = os.environ['S3_BUCKET']
+    s3_bucket = os.environ['ASSET_BUCKET']
     s3 = boto3.client('s3')
     s3_resource = boto3.resource('s3')
     config = TransferConfig(multipart_threshold=1024*25, max_concurrency=10,

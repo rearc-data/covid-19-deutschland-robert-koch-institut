@@ -181,4 +181,7 @@ $RECYCLE.BIN/
 **/pre-processing-code.zip
 
 response.json
-run.sh
+
+### PyCharm
+.idea/
+venv/

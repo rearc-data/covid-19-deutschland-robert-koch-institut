@@ -3,11 +3,11 @@ REARC_DATA_PLATFORM_EXTERNAL_ID='Rearc-Data-Platform-796406704065'
 ASSET_BUCKET='rearc-data-provider'
 MANIFEST_BUCKET='rearc-control-plane-manifest'
 CUSTOMER_ID='796406704065'
-DATASET_NAME='test-dataset'
-DATASET_ARN='arn:aws:dataexchange:us-east-1:796406704065:data-sets/6afda64ca351e462006618317d6c2f7b'
-PRODUCT_NAME='Test'
-PRODUCT_ID='prod-ug6qz34kqdxco'
-SCHEDULE_CRON="cron(30 5 ? * 6 *)"
+DATASET_NAME='covid-19-deutschland-robert-koch-institut'
+DATASET_ARN='arn:aws:dataexchange:us-east-1:796406704065:data-sets/bf2291eefaee2fdb12700a03e1e3257d'
+PRODUCT_NAME='COVID-19 Deutschland | Robert Koch-Institut (RKI) | COVID-19 Germany'
+PRODUCT_ID='prod-iakpotwzflj5e'
+SCHEDULE_CRON="cron(0 9 * * ? *)"
 REGION='us-east-1'
 PROFILE='default'
 

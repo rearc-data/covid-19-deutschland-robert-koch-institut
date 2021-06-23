@@ -1,206 +1,65 @@
 import time
 import json
 from source_data import source_dataset
-import boto3
 import os
+import logging
 from datetime import date, datetime
 from multiprocessing.dummy import Pool
 
+from rearc_data_utils.platform.sts_helper import get_data_plane_client
+
+logger = logging.getLogger(__name__)
+
 os.environ['AWS_DATA_PATH'] = '/opt/'
 
-dataexchange = boto3.client(
-	service_name='dataexchange',
-	region_name=os.environ['REGION']
-)
+rdp_role_arn = os.getenv("RDP_ROLE_ARN")
+rdp_external_id = os.getenv("RDP_EXTERNAL_ID")
 
-marketplace = boto3.client(
-	service_name='marketplace-catalog',
-	region_name=os.environ['REGION']
-)
+product_id = os.getenv("PRODUCT_ID", "blank")
+dataset_arn = os.getenv("DATASET_ARN")
+dataset_id = dataset_arn.split('/', 1)[1]
+dataset_name = os.getenv("DATASET_NAME")
 
-source_url = os.environ['SOURCE_URL']
-s3_bucket = os.environ['S3_BUCKET']
-data_set_arn = os.environ['DATA_SET_ARN']
-data_set_id = data_set_arn.split('/', 1)[1]
-product_id = os.environ['PRODUCT_ID']
-data_set_name = os.environ['DATA_SET_NAME']
-new_s3_key = data_set_name + '/dataset/'
-cfn_template = data_set_name + '/automation/cloudformation.yaml'
-post_processing_code = data_set_name + '/automation/post-processing-code.zip'
+asset_bucket = os.getenv("ASSET_BUCKET")
+manifest_bucket = os.getenv("MANIFEST_BUCKET")
+customer_id = os.getenv("CUSTOMER_ID")
 
-today = date.today().strftime('%Y-%m-%d')
-revision_comment = 'Revision Updates v' + today
+timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
+revision_comment = 'Revision Updates v' + timestamp
 
-if not source_url:
-	raise Exception("'SOURCE_URL' environment variable must be defined!")
+required_env_vars = [ rdp_role_arn, rdp_external_id, product_id, dataset_arn, dataset_name, asset_bucket, manifest_bucket, customer_id ]
+for v in required_env_vars:
+	if not v:
+		raise Exception(f"'{v.upper()}' environment variable must be defined!")
 
-if not s3_bucket:
-	raise Exception("'S3_BUCKET' environment variable must be defined!")
+logger.info(f"rdp_role_arn: {rdp_role_arn} ; rdp_external_id: {rdp_external_id}")
 
-if not new_s3_key:
-	raise Exception("'DATA_SET_NAME' environment variable must be defined!")
-
-if not data_set_arn:
-	raise Exception("'DATA_SET_ARN' environment variable must be defined!")
-
-if not product_id:
-	raise Exception("'PRODUCT_ID' environment variable must be defined! {}".format(product_id))
+s3 = get_data_plane_client(rdp_role_arn, rdp_external_id, service_name='s3')
 
 
-def start_change_set(describe_entity_response, revision_arn):
+def upload_manifest_file(asset_list):
+    """ 
+        Generates and uploads a manifest file to the MANIFEST_BUCKET of the 
+        Rearc Data Platform or AWS Data Exchange Publisher Coordinator
+        https://github.com/rearc-data/aws-data-exchange-publisher-coordinator
+    """
+    manifest_file_data = {
+        "product_id": product_id,
+        "dataset_id": dataset_id,
+        "asset_list": asset_list
+    }
 
-	# Call AWSMarketplace Catalog's start-change-set API to add revisions to the Product
-	change_details = {
-		'DataSetArn': data_set_arn,
-		'RevisionArns': [
-			revision_arn
-		]
-	}
+    manifest_file_name = f"manifest-{timestamp}.json"
+    manifest_object_key = os.path.join(customer_id, product_id, dataset_id, manifest_file_name)
 
-	change_set = [
-		{
-			'ChangeType': 'AddRevisions',
-			'Entity': {
-				'Identifier': describe_entity_response['EntityIdentifier'],
-				'Type': describe_entity_response['EntityType']
-			},
-			'Details': json.dumps(change_details)
-		}
-	]
-
-	response = marketplace.start_change_set(
-		Catalog='AWSMarketplace', ChangeSet=change_set)
-
-	CHANGE_SET_RETRIES = 5
-	i = 0
-	while i < CHANGE_SET_RETRIES:
-		time.sleep(1)
-		change_set_id = response['ChangeSetId']
-		
-		describe_change_set = marketplace.describe_change_set(
-				Catalog='AWSMarketplace', ChangeSetId=change_set_id)
-		
-		describe_change_set_status = describe_change_set['Status']
-		
-		if describe_change_set_status == 'SUCCEEDED':
-				break 
-		
-		if describe_change_set_status == 'FAILED' and i >= CHANGE_SET_RETRIES:
-				raise Exception("#{}\n#{}".format(describe_change_set["failure_description"], describe_change_set["change_set"]["first"]["error_detail_list"].join()))
-       
-		i += 1
-
-
-	return response
-
-
-def jobs_handler(data):
-
-	# Used to store the Ids of the Jobs importing the assets to S3.
-	job_ids = set()
-
-	print('asset_list {} of {}:'.format(
-		data['job_num'], data['total_jobs']), data['asset_list'])
-
-	import_job = dataexchange.create_job(
-		Type='IMPORT_ASSETS_FROM_S3',
-		Details={
-			'ImportAssetsFromS3': {
-				'DataSetId': data_set_id,
-				'RevisionId': data['revision_id'],
-				'AssetSources': data['asset_list']
-			}
-		}
-	)
-
-	# Start the Job and save the JobId.
-	dataexchange.start_job(JobId=import_job['Id'])
-	job_ids.add(import_job['Id'])
-
-	# Iterate until all remaining jobs have reached a terminal state, or an error is found.
-	completed_jobs = set()
-
-	while job_ids != completed_jobs:
-		for job_id in job_ids:
-			if job_id in completed_jobs:
-				continue
-			get_job_response = dataexchange.get_job(JobId=job_id)
-			if get_job_response['State'] == 'COMPLETED':
-				print('JobId: {}, Job {} of {} completed'.format(
-					job_id, data['job_num'], data['total_jobs']))
-				completed_jobs.add(job_id)
-			if get_job_response['State'] == 'ERROR':
-				job_errors = get_job_response['Errors']
-				raise Exception(
-					'JobId: {} failed with errors:\n{}'.format(job_id, job_errors))
-			# Sleep to ensure we don't get throttled by the GetJob API.
-			time.sleep(.5)
+    s3.put_object(Body=json.dumps(manifest_file_data), Bucket=manifest_bucket, Key=manifest_object_key, ACL="bucket-owner-full-control")
 
 
 def lambda_handler(event, context):
-	asset_list = source_dataset(source_url)
-	asset_lists = [asset_list[i:i+100] for i in range(0,len(asset_list), 100)]
+    asset_list = source_dataset()
 
-	if type(asset_lists) == list:
-
-		if len(asset_lists) == 0:
-			print(
-				'No need for a revision, all datasets included with this product are up to date')
-			return {
-				'statusCode': 200,
-				'body': json.dumps('No need for a revision, all datasets included with this product are up to date')
-			}
-
-		create_revision_response = dataexchange.create_revision(DataSetId=data_set_id)
-		revision_id = create_revision_response['Id']
-		revision_arn = create_revision_response['Arn']
-
-		for idx in range(len(asset_lists)):
-			asset_lists[idx] = {
-				'asset_list': asset_lists[idx],
-				'revision_id': revision_id,
-				'job_num': str(idx + 1),
-				'total_jobs': str(len(asset_lists))
-			}
-
-		with (Pool(10)) as p:
-			p.map(jobs_handler, asset_lists)
-
-		update_revision_response = dataexchange.update_revision(
-			DataSetId=data_set_id,
-			RevisionId=revision_id,
-			Comment=revision_comment,
-			Finalized=True
-		)
-
-		revision_state = update_revision_response['Finalized']
-
-		if revision_state == True:
-			if product_id and product_id != 'blank':
-				# Call AWSMarketplace Catalog's APIs to add revisions
-				describe_entity_response = marketplace.describe_entity(
-					Catalog='AWSMarketplace', EntityId=product_id)
-				start_change_set_response = start_change_set(
-					describe_entity_response, revision_arn)
-				if start_change_set_response['ChangeSetId']:
-					print('Revision updated successfully and added to the dataset')
-					return {
-						'statusCode': 200,
-						'body': json.dumps('Revision updated successfully and added to the dataset')
-					}
-				else:
-					print('Something went wrong with AWSMarketplace Catalog API')
-					return {
-						'statusCode': 500,
-						'body': json.dumps('Something went wrong with AWSMarketplace Catalog API')
-					}
-			else:
-				print('Initial dataset revision Created.')
-		else:
-			print('Revision did not complete successfully')
-			return {
-				'statusCode': 500,
-				'body': json.dumps('Revision did not complete successfully')
-			}
-	else:
-		raise Exception('Something went wrong when uploading files to s3')
+    if asset_list:
+        try:
+            upload_manifest_file(asset_list)
+        except Exception as e:
+            raise Exception(f"Something went wrong when uploading manifest file to manifest bucket: {e}")
